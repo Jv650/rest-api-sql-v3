@@ -9,7 +9,7 @@ const router = express.Router();
 //along with a 200 HTTP status code
 
 router.get(
-  "/users",
+  "/api/users",
   authenticateUser,
   asyncHandler(async (req, res) => {
     const user = req.currentUser;
@@ -28,10 +28,12 @@ router.get(
 //This route should create a new user, set the Location header to "/",
 //and return a 201 HTTP status code and no content.
 router.post(
-  "/users",
+  "/api/users",
   asyncHandler(async (req, res) => {
     await User.create(req.body);
     res.redirect("Location", "/");
     res.status(201).json({ message: "Account successfully created!" });
   })
 );
+
+module.exports = router;
