@@ -38,7 +38,7 @@ app.use(morgan("dev"));
 
 // Add routes.
 app.use("/api/users", userRoutes);
-app.use("/api/course", courseRoutes);
+app.use("/api/courses", courseRoutes);
 
 // setup a friendly greeting for the root route
 app.get("/", (req, res) => {
