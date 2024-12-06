@@ -4,6 +4,7 @@ const { User } = require("../models");
 // Construct a router instance??
 const router = express.Router();
 var bcrypt = require("bcryptjs");
+const { authenticateUser } = require("../middleware/user-auth");
 
 //Handler function to wrap routes and to allow proper usager of asyncHandler
 function asyncHandler(cb) {

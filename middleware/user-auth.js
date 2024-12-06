@@ -7,7 +7,7 @@ var bcrypt = require("bcryptjs");
 
 // Middleware to authenticate the request using Basic Authentication.
 //exports.authenticateUser exports the middleware function so that you're able to import it from within another module.
-exports.authenticator = async (req, res, next) => {
+exports.authenticateUser = async (req, res, next) => {
   //store the message to display
   let message;
   //Parse users credentials from authorization header

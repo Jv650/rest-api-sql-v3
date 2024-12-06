@@ -4,6 +4,7 @@ const { Course } = require("../models");
 const { User } = require("../models");
 // Construct a router instance??
 const router = express.Router();
+const { authenticateUser } = require("../middleware/user-auth");
 
 function asyncHandler(cb) {
   return async (req, res, next) => {
