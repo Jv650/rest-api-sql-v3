@@ -1,13 +1,23 @@
 "use strict";
 const express = require("express");
-const { User } = require("./models");
+const { User } = require("../models");
 // Construct a router instance??
 const router = express.Router();
+var bcrypt = require("bcryptjs");
 
+//Handler function to wrap routes and to allow proper usager of asyncHandler
+function asyncHandler(cb) {
+  return async (req, res, next) => {
+    try {
+      await cb(req, res, next);
+    } catch (err) {
+      next(err);
+    }
+  };
+}
 ///api/users - GET:
 //This will return all properties and values for the currently authenticated User
 //along with a 200 HTTP status code
-
 router.get(
   "/api/users",
   authenticateUser,
@@ -30,9 +40,28 @@ router.get(
 router.post(
   "/api/users",
   asyncHandler(async (req, res) => {
-    await User.create(req.body);
-    res.redirect("Location", "/");
-    res.status(201).json({ message: "Account successfully created!" });
+    console.log(req.body);
+    try {
+      await User.create(req.body);
+      //   await User.create({
+      //     firstName: req.user.firstName,
+      //     lastName: req.user.lastName,
+      //     emailAddress: req.user.emailAddress,
+      //     password: req.user.password,
+      //   });
+      res.status(201).json({ message: "Account successfully created!" });
+      res.redirect("Location", "/");
+    } catch (error) {
+      if (
+        error.name === "SequelizeValidationError" ||
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
+        const errors = error.errors.map((err) => err.message);
+        res.status(400).json({ errors });
+      } else {
+        throw error;
+      }
+    }
   })
 );
 

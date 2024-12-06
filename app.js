@@ -3,7 +3,8 @@
 // load modules
 const express = require("express");
 const morgan = require("morgan");
-//const routes = require("./routes");
+const userRoutes = require("./routes/user");
+const courseRoutes = require("./routes/course");
 
 //Include sequelize in program by requiring the 'sequelize' module
 const Sequelize = require("sequelize");
@@ -12,8 +13,8 @@ const sequelize = new Sequelize({
   dialect: "sqlite",
   storage: "fsjstd-restapi.db",
 });
-//Use Sequelize authenticate function
-//sync databse w/ async IIFE or Immediately Invoked Function Expression
+// use Sequelize authenticate function
+// sync databse w/ async IIFE or Immediately Invoked Function Expression
 (async () => {
   try {
     await sequelize.authenticate();
@@ -36,7 +37,7 @@ const app = express();
 app.use(morgan("dev"));
 
 // Add routes.
-//app.use("/api", routes);
+app.use("/api/users", userRoutes);
 
 // setup a friendly greeting for the root route
 app.get("/", (req, res) => {
