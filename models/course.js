@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         },
       },
       description: {
-        type: DataTypes.STRING,
+        type: DataTypes.TEXT,
         allowNull: false,
         validate: {
           notNull: {
@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       materialsNeeded: {
         type: DataTypes.STRING,
       },
+      // userId: {
+      //   type: DataTypes.INTEGER,
+      //   allowNull: true,
+      // },
     },
     {
       sequelize,
