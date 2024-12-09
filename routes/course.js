@@ -5,6 +5,7 @@ const { User } = require("../models");
 // Construct a router instance??
 const router = express.Router();
 const { authenticateUser } = require("../middleware/user-auth");
+const { verifyCourseOwner } = require("../middleware/verify-owner");
 
 function asyncHandler(cb) {
   return async (req, res, next) => {
@@ -81,8 +82,7 @@ router.post(
   authenticateUser,
   asyncHandler(async (req, res) => {
     try {
-      req.body = req.currentUser.id;
-      const course = await Course.create(req.body.id);
+      const course = await Course.create(req.body);
       res.status(201).location(`/courses/${course.id}`).end();
     } catch (error) {
       if (
@@ -136,25 +136,18 @@ router.post(
 
 router.put(
   "/:id",
+  //security check point
   authenticateUser,
+  verifyCourseOwner,
   asyncHandler(async (req, res) => {
-    try {
-      const getCourse = await Course.create(req.body); //await records.getQuote(req.params.id);
-      if (getCourse) {
-        //set quote objects quote property equal to the new quote property sent to us by the client
-        getCourse.title = req.body.title;
-        getCourse.description = req.body.description;
-        getCourse.estimatedTime = req.body.estimatedTime;
-        getCourse.materialsNeeded = req.body.materialsNeeded;
-
-        await Course.update(getCourse); //updateQuote method will save the new quote to the datastore - since its an async function you need to await it as well
-        res.status(204).end(); //for put req, it's best practice to send a 204 status code which means everything was sent ok but there's nothing to send back
-      } else {
-        res.status(404).json({ message: "Course not found" });
-      }
-    } catch (err) {
-      res.status(500).json({ message: err.message }); //you can inidicate your own status codes
-    }
+    //set quote objects quote property equal to the new quote property sent to us by the client
+    const course = req.course;
+    course.title = req.body.title;
+    course.description = req.body.description;
+    course.estimatedTime = req.body.estimatedTime;
+    course.materialsNeeded = req.body.materialsNeeded;
+    await course.save(); //await because save takes time
+    res.status(204).end();
   })
 );
 
@@ -163,12 +156,21 @@ router.put(
 // //return a 204 HTTP status code and no content
 router.delete(
   "/:id",
+  //security check point
   authenticateUser,
+  verifyCourseOwner,
   asyncHandler(async (req, res) => {
     try {
-      const course = await course.getCourse(req.params.id);
-      await course.deleteCourse(course);
-      res.status(204).end();
+      const courseId = req.params.id; //course(req.params.id);
+      //await course.delete();
+      //course.destr(req.params);
+      const result = await Course.destroy({ where: { id: courseId } });
+      if (result) {
+        res
+          .status(204)
+          .json({ message: `Course with id ${courseId} has been deleted` })
+          .end();
+      }
     } catch (err) {
       res.status(500).json({ message: err.message }); //you can inidicate your own status code
     }

@@ -43,8 +43,11 @@ router.post(
   "/",
   asyncHandler(async (req, res) => {
     console.log(req.body);
+    const { firstName, emailAddress, password } = req.body;
+    console.log(firstName, emailAddress, password);
     try {
-      await User.create(req.body);
+      const newUser = req.body;
+      await User.create(newUser);
       res.status(201).location("/").end();
     } catch (error) {
       if (

@@ -17,18 +17,18 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
         validate: {
-          notNull: {
-            msg: "Title required",
-          },
+          // notNull: {
+          //   msg: "Title required",
+          // },
         },
       },
       description: {
         type: DataTypes.TEXT,
         allowNull: false,
         validate: {
-          notNull: {
-            msg: "Description required",
-          },
+          // notNull: {
+          //   msg: "Description required",
+          // },
         },
       },
       estimatedTime: {
@@ -37,10 +37,10 @@ module.exports = (sequelize, DataTypes) => {
       materialsNeeded: {
         type: DataTypes.STRING,
       },
-      // userId: {
-      //   type: DataTypes.INTEGER,
-      //   allowNull: true,
-      // },
+      userId: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+      },
     },
     {
       sequelize,
@@ -49,6 +49,7 @@ module.exports = (sequelize, DataTypes) => {
   );
 
   //one-to-one association between the Course and User models using the belongsTo() method
+  //each course is associated with one user
   Course.associate = (models) => {
     Course.belongsTo(models.User, {
       foreignKey: {

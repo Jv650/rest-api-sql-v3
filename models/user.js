@@ -55,7 +55,7 @@ module.exports = (sequelize, DataTypes) => {
         set(val) {
           //code to hash
           const hashedPassword = bcrypt.hashSync(val, 10);
-          this.setDataValue("confirmedPassword", hashedPassword);
+          this.setDataValue("password", hashedPassword); //setting value of password
         },
       },
     },

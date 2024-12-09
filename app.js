@@ -19,7 +19,7 @@ const sequelize = new Sequelize({
   try {
     await sequelize.authenticate();
     console.log("Connection established successfully");
-    await sequelize.sync();
+    await sequelize.sync({ alter: true });
     console.log("Connection to the database successful!");
   } catch (error) {
     console.error("Error connecting to the database: ", error);
@@ -32,7 +32,7 @@ const enableGlobalErrorLogging =
 
 // create the Express app
 const app = express();
-
+app.use(express.json());
 // setup morgan which gives us http request logging
 app.use(morgan("dev"));
 
