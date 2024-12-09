@@ -176,6 +176,7 @@ router.put(
       course.description = req.body.description;
       course.estimatedTime = req.body.estimatedTime;
       course.materialsNeeded = req.body.materialsNeeded;
+
       await course.save(); //await because save takes time
       res.status(204).end();
     } catch (error) {
