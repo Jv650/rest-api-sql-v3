@@ -3,7 +3,7 @@ const { Course } = require("../models");
 //middleware to verify if it's the correct course owner (id)
 
 exports.verifyCourseOwner = async (req, res, next) => {
-  const course = await Course.findByPk(req.params.id); //await .getQuote(req.params.id);
+  const course = await Course.findByPk(req.params.id); //await .getCourse(req.params.id);
   //console.log(getCount.userId);
   //console.log()
   if (!course) {

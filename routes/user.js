@@ -23,9 +23,10 @@ router.get(
   "/",
   authenticateUser,
   asyncHandler(async (req, res) => {
-    const user = await User.findAll({
-      //include: [{ model: User }],
-    });
+    const user = req.currentUser;
+    //= await User.findAll({
+    //   //include: [{ model: User }],
+    // });
 
     if (user) {
       res.status(200).json(user);

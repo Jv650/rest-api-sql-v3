@@ -24,7 +24,19 @@ router.get(
   "/",
   asyncHandler(async (req, res) => {
     const course = await Course.findAll({
-      include: [{ model: User }],
+      attributes: [
+        "id",
+        "title",
+        "description",
+        "estimatedTime",
+        "materialsNeeded",
+      ],
+      include: [
+        {
+          model: User,
+          attributes: ["id", "firstName", "lastName", "emailAddress"],
+        },
+      ],
     });
 
     if (course) {
@@ -43,8 +55,22 @@ router.get(
   "/:id",
   asyncHandler(async (req, res) => {
     try {
-      //the await will wait and find the quote based on what the user inputs as the :id
-      const course = await Course.findByPk(req.params.id);
+      //the await will wait and find the course based on what the user inputs as the :id
+      const course = await Course.findByPk(req.params.id, {
+        attributes: [
+          "id",
+          "title",
+          "description",
+          "estimatedTime",
+          "materialsNeeded",
+        ],
+        include: [
+          {
+            model: User,
+            attributes: ["id", "firstName", "lastName", "emailAddress"],
+          },
+        ],
+      });
       if (course) {
         res.json(course);
       } else {
@@ -102,37 +128,40 @@ router.post(
 // // ///api/courses/:id - PUT:
 // // //Update the corresponding course and
 // // //return a 204 HTTP status code and no content
-// router.put("/:id", async (req, res) => {
-//   try {
-//     const getCourse = await Course.findByPk(req.params.userId);
-//     if (getCourse) {
-//       //set course objects property equal to the new course property sent to us by the client
-//       getCourse.course = req.body.course;
-//       await getCourse.update({
-//         title: req.body.title,
-//         description: req.body.description,
-//         estimatedTime: req.body.estimatedTime,
-//         materialsNeeded: req.body.materialsNeeded,
-//         userId: req.body.userId,
-//       });
-
-//       res.status(204).end(); //for put req, it's best practice to send a 204 status code which means everything was sent ok but there's nothing to send back
-//     } else {
-//       res.status(404).json({ message: "Course not found" });
+// router.put("/:id",
+// authenticateUser,
+//   verifyCourseOwner,
+//   asyncHandler(async (req, res) => {
+//     try {
+//       const course = req.course;
+//       if (course) {
+//         //set course objects property equal to the new course property sent to us by the client
+//         getCourse.course = req.body.course;
+//         await getCourse.update({
+//           title: req.body.title,
+//           description: req.body.description,
+//           estimatedTime: req.body.estimatedTime,
+//           materialsNeeded: req.body.materialsNeeded,
+//           userId: req.body.userId,
+//         });
+//         await course.save();
+//         res.status(204).end(); //for put req, it's best practice to send a 204 status code which means everything was sent ok but there's nothing to send back
+//       } else {
+//         res.status(404).json({ message: "Course not found" });
+//       }
+//     } catch (error) {
+//       //res.status(500).json({ message: err.message }); //you can inidicate your own status codes
+//       if (
+//         error.name === "SequelizeValidationError" ||
+//         error.name === "SequelizeUniqueConstraintError"
+//       ) {
+//         const errors = error.errors.map((error) => error.message);
+//         res.status(400).json({ errors });
+//       } else {
+//         throw error;
+//       }
 //     }
-//   } catch (error) {
-//     //res.status(500).json({ message: err.message }); //you can inidicate your own status codes
-//     if (
-//       error.name === "SequelizeValidationError" ||
-//       error.name === "SequelizeUniqueConstraintError"
-//     ) {
-//       const errors = error.errors.map((error) => error.message);
-//       res.status(400).json({ errors });
-//     } else {
-//       throw error;
-//     }
-//   }
-// });
+//   });
 
 router.put(
   "/:id",
@@ -140,14 +169,27 @@ router.put(
   authenticateUser,
   verifyCourseOwner,
   asyncHandler(async (req, res) => {
-    //set quote objects quote property equal to the new quote property sent to us by the client
-    const course = req.course;
-    course.title = req.body.title;
-    course.description = req.body.description;
-    course.estimatedTime = req.body.estimatedTime;
-    course.materialsNeeded = req.body.materialsNeeded;
-    await course.save(); //await because save takes time
-    res.status(204).end();
+    try {
+      //set course objects course property equal to the new course property sent to us by the client
+      const course = req.course;
+      course.title = req.body.title;
+      course.description = req.body.description;
+      course.estimatedTime = req.body.estimatedTime;
+      course.materialsNeeded = req.body.materialsNeeded;
+      await course.save(); //await because save takes time
+      res.status(204).end();
+    } catch (error) {
+      if (
+        error.name === "SequelizeValidationError" ||
+        error.name === "SequelizeUniqueConstraintError"
+      ) {
+        const errors = error.errors.map((err) => err.message);
+        console.log("Validation errors: ", errors);
+        res.status(400).json({ errors });
+      } else {
+        throw error;
+      }
+    }
   })
 );
 
