@@ -19,6 +19,7 @@ exports.verifyCourseOwner = async (req, res, next) => {
     }
     // attaches course to request object so that they next guy can use it
     req.course = course;
+    next();
   } catch (err) {
     next(err);
   }

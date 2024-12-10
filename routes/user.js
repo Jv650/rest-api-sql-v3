@@ -23,13 +23,10 @@ router.get(
   "/",
   authenticateUser,
   asyncHandler(async (req, res) => {
-    const user = await User.findAll({
-      attributes: ["id", "firstName", "lastName", "emailAddress"],
-    });
-
-    //= await User.findAll({
-    //   //include: [{ model: User }],
-    // });
+    const user = //req.currentUser;
+      await User.findByPk(req.currentUser.id, {
+        attributes: { exclude: ["password", "createdAt", "updatedAt"] },
+      });
 
     if (user) {
       res.status(200).json(user);
