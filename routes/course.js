@@ -171,7 +171,7 @@ router.put(
   asyncHandler(async (req, res) => {
     try {
       //set course objects course property equal to the new course property sent to us by the client
-      const course = req.course;
+      const course = req.course; //retrieved from middleware
       course.title = req.body.title;
       course.description = req.body.description;
       course.estimatedTime = req.body.estimatedTime;
@@ -204,16 +204,16 @@ router.delete(
   verifyCourseOwner,
   asyncHandler(async (req, res) => {
     try {
-      const courseId = req.params.id; //course(req.params.id);
+      const course = req.course; //req.params.id; //course(req.params.id);
+      await course.destroy();
       //await course.delete();
       //course.destr(req.params);
-      const result = await Course.destroy({ where: { id: courseId } });
-      if (result) {
-        res
-          .status(204)
-          .json({ message: `Course with id ${courseId} has been deleted` })
-          .end();
-      }
+      //const result = await Course.destroy({ where: { id: courseId } });
+
+      res
+        .status(204)
+        .json({ message: `Course with id ${req.params.id} has been deleted` })
+        .end();
     } catch (err) {
       res.status(500).json({ message: err.message }); //you can inidicate your own status code
     }

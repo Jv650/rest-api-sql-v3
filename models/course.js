@@ -20,6 +20,9 @@ module.exports = (sequelize, DataTypes) => {
           notNull: {
             msg: "Title required",
           },
+          notEmpty: {
+            msg: "Title cannot be empty",
+          },
         },
       },
       description: {
@@ -28,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
         validate: {
           notNull: {
             msg: "Description required",
+          },
+          notEmpty: {
+            msg: "Description cannot be empty",
           },
         },
       },
